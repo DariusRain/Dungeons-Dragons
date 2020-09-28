@@ -1,12 +1,10 @@
 package com.coderain;
 
 public class Calculator {
-    int ac;
-    int defenseMod;
-    int attackModifier;
-    String damageDice;
-    Console console = new Console();
-    private void attack() {
-
+    Dice dice = new Dice();
+    public int[] attack(int qtyOfDice, int diceChoice,  Character defender) {
+        int[] attackResult = dice.roll(qtyOfDice, diceChoice);
+        defender.setHealth(defender.getHealth() - attackResult[0]);
+        return attackResult;
     }
 }

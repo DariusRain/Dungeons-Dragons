@@ -16,8 +16,8 @@ public class Console {
     public void clear () {
         output = "";
     }
-    private void clearScreen() {
-        System.out.print("\033[H\033[2J");
+    public void clearScreen() {
+        System.out.print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
         System.out.flush();
     }
     public void out (String s) {

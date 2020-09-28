@@ -1,23 +1,29 @@
 package com.coderain;
 
 public class Character {
-    private CharacterTypes type;
+    private String type;
     private String player;
     private int health;
 
-    public void setType(CharacterTypes type) {
+    public Character(String type, String player) {
+        this.type = type;
+        this.player = player;
+        health = 100;
+    }
+
+    public void setType(String type) {
         this.type = type;
     }
 
-    public void setPlayer() {
+    public void setPlayer(String player) {
         this.player = player;
     }
 
-    public void setHealth() {
+    public void setHealth(int health) {
         this.health = health;
     }
 
-    public CharacterTypes getType() {
+    public String getType() {
         return type;
     }
 
