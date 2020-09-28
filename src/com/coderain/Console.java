@@ -13,11 +13,14 @@ public class Console {
     public String output;
 
     // Clears the output
-    public void clear() {
+    public void clear () {
         output = "";
     }
-
-    public void out(String s) {
+    public void clearScreen() {
+        System.out.print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+        System.out.flush();
+    }
+    public void out (String s) {
         output += s;
     }
 
@@ -36,7 +39,7 @@ public class Console {
         return input.nextLine();
     }
 
-    public String input() {
+    public String input () {
         return input.nextLine();
     }
 
