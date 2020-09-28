@@ -1,8 +1,5 @@
 package com.coderain;
-
 import java.security.SecureRandom;
-import java.util.Arrays;
-import java.util.stream.*;
 
 public class Dice {
 
@@ -21,14 +18,13 @@ public class Dice {
     // @roll() Only responsible for rolling dice and is expecting two arguments
         // --> Other methods will handle parsing the ints for each argument nOfDice & diceType
         // --> The integer that will be returned is going to be used in the Calculator class for
-
     public int roll (int nOfDice, int diceType) {
-
             // Init
             console.log("Rolling D" + diceType + " " + nOfDice + "times...");
             result = 0;
             rollValue = 0;
             int count = 1;
+
             // Runs until number of dice are gone
             while (true) {
                 if(nOfDice == 0) {
