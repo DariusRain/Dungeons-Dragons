@@ -1,6 +1,8 @@
 package com.coderain;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+
 import static java.lang.System.exit;
 
 public class Game {
@@ -20,40 +22,25 @@ public class Game {
     private final ArrayList<Character> characters = new ArrayList<>();
     private int onPlayer = 0;
     public boolean nextMenu = false;
-    private boolean gameOver = false;
     private int nOfReRolls = 0;
 
     public void start() {
         while (!nextMenu) {
-            displayMainMenu();
+            mainMenu();
         }
 
         while (nextMenu) {
-            displayAttackMenu();
-        }
-        if (gameOver) {
-            console.clearScreen();
-            console.log("The winner of the game is " + characters.get(0).getPlayer());
-            exit(0);
+            attackMenu();
+            if (isGameOver()) {
+                console.clearScreen();
+                console.log("The winner of the game is " + characters.get(0).getPlayer());
+                exit(0);
+            }
         }
     }
 
-    private void next() {
-        int survivorCount = 0;
-        int counter = 0;
-        for (Character character: characters) {
-            if (character.getHealth() <= 0) {
-               console.log(character.getPlayer() + " has been eliminated...");
-               characters.remove(counter);
-            } else {
-                survivorCount += 1;
-            }
-            counter += 1;
-        }
-        if (survivorCount == 1) {
-            gameOver = true;
-        }
-        if (onPlayer < characters.size()) {
+    public void next() {
+        if (onPlayer <= characters.size() - 1) {
             onPlayer += 1;
         } else {
             onPlayer = 0;
@@ -67,18 +54,16 @@ public class Game {
                 console.log("\n");
             }
             counter += 1;
-            console.logf(counter + " D" + die + "  ");
+            console.logf(counter + ": D" + die + "  ");
         }
         console.log("\n");
     }
-    public void displayAttackMenu() {
+
+    public void attackMenu() {
         console.log("\n\n\n");
         console.log("Dungeons & Dragons (Attack Menu):");
         displayStatus();
-        if (onPlayer < characters.size()) {
-            onPlayer = 0;
-        }
-        Character attacker = characters.get(onPlayer);
+        Character attacker = characters.get(onPlayer <= characters.size() - 1 ? onPlayer : 0);
         int attackChoice = askForMenuChoice("Choose who to attack ( " + attacker.getPlayer() + " / " + attacker.getType() + " / " + attacker.getHealth() +" ):" + (0 < nOfReRolls? "(Re-roll #" + nOfReRolls + ") " : " "), characters.size() + 1);
         displayDice();
         int diceChoice = askForMenuChoice("What type of dice do you want to roll: ", diceTypes.length);
@@ -89,9 +74,9 @@ public class Game {
         if (0 < nOfReRolls) {
             console.log(attacker.getPlayer() + " " + "has "  + nOfReRolls + " re-roll(s)...\n");
             nOfReRolls -= 1;
-            displayAttackMenu();
+            attackMenu();
         } else {
-          next();
+            next();
         }
     }
 
@@ -138,15 +123,16 @@ public class Game {
         }
     }
 
-    private void displayMainMenu() {
+    public void mainMenu() {
         int counter = 0;
-        console.log("Dungeons & Dragons (Main Menu):");
+        console.log("\nDungeons & Dragons (Main Menu)");
+        console.log("==============================\n");
         for (String character : characterTypes) {
             counter += 1;
             if (counter % 5 == 0) {
                 console.log("\n");
             }
-            console.logf(counter + " " + character + "  ");
+            console.logf(counter + ": " + character + "  ");
         }
 
         console.log("\n");
@@ -158,9 +144,33 @@ public class Game {
         if (choice < counter + 1) {
             askForPlayerName(choice);
         } else {
-            this.nextMenu = true;
+            nextMenu = true;
         }
         console.clearScreen();
     }
+    public boolean isGameOver() {
+        int survivorCount = 0;
+        int counter = 0;
+        ArrayList remove = new ArrayList<>();
+        Iterator<Character> characterArr = characters.iterator();
+        while (characterArr.hasNext()) {
+            Character character = characterArr.next();
+            if (character.getHealth() <= 0) {
+                console.log(character.getPlayer() + " has been eliminated...");
+                remove.add(counter);
+                continue;
+            } else {
+                survivorCount += 1;
+            }
+            counter += 1;
+        }
+        Iterator removeArr = remove.iterator();
+        while (removeArr.hasNext()) {
+            characters.remove(removeArr.next());
+        }
+
+        return survivorCount == 1;
+    }
+
 }
 
