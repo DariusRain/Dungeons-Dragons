@@ -1,6 +1,8 @@
 package com.coderain;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+
 import static java.lang.System.exit;
 
 public class Game {
@@ -24,16 +26,16 @@ public class Game {
 
     public void start() {
         while (!nextMenu) {
-            displayMainMenu();
+            mainMenu();
         }
 
         while (nextMenu) {
-            displayAttackMenu();
-        }
-        if (gameOver) {
-            console.clearScreen();
-            console.log("The winner of the game is " + characters.get(0).getPlayer());
-            exit(0);
+            attackMenu();
+            if (isGameOver()) {
+                console.clearScreen();
+                console.log("The winner of the game is " + characters.get(0).getPlayer());
+                exit(0);
+            }
         }
     }
 
@@ -56,7 +58,8 @@ public class Game {
         }
         console.log("\n");
     }
-    public void displayAttackMenu() {
+
+    public void attackMenu() {
         console.log("\n\n\n");
         console.log("Dungeons & Dragons (Attack Menu):");
         displayStatus();
@@ -71,7 +74,7 @@ public class Game {
         if (0 < nOfReRolls) {
             console.log(attacker.getPlayer() + " " + "has "  + nOfReRolls + " re-roll(s)...\n");
             nOfReRolls -= 1;
-            displayAttackMenu();
+            attackMenu();
         } else {
             next();
         }
@@ -120,7 +123,7 @@ public class Game {
         }
     }
 
-    public void displayMainMenu() {
+    public void mainMenu() {
         int counter = 0;
         console.log("\nDungeons & Dragons (Main Menu)");
         console.log("==============================\n");
@@ -148,19 +151,25 @@ public class Game {
     public boolean isGameOver() {
         int survivorCount = 0;
         int counter = 0;
-        for (Character character: characters) {
+        ArrayList remove = new ArrayList<>();
+        Iterator<Character> characterArr = characters.iterator();
+        while (characterArr.hasNext()) {
+            Character character = characterArr.next();
             if (character.getHealth() <= 0) {
                 console.log(character.getPlayer() + " has been eliminated...");
-                characters.remove(counter);
+                remove.add(counter);
                 continue;
             } else {
                 survivorCount += 1;
             }
             counter += 1;
         }
-        if (survivorCount == 1) {
-            return true;
+        Iterator removeArr = remove.iterator();
+        while (removeArr.hasNext()) {
+            characters.remove(removeArr.next());
         }
+
+        return survivorCount == 1;
     }
 
 }
