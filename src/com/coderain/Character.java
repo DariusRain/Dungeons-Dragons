@@ -5,6 +5,7 @@ public class Character {
     private String player;
     private int health;
 
+
     public Character(String type, String player) {
         this.type = type;
         this.player = player;
