@@ -6,6 +6,8 @@ import java.util.Iterator;
 import static java.lang.System.exit;
 
 public class Game {
+
+    // These are all the character types a user can choose from. ( Had them as enums at first)
     private static final String[] characterTypes = {
             "BARBARIAN", "BARD", "CLERIC",
             "DRUID", "FIGHTER", "MONK",
@@ -13,25 +15,47 @@ public class Game {
             "SORCERER", "WARLOCK", "WIZARD"
     };
 
-    private static final int[] diceTypes = {4, 6, 8, 10, 12, 20};
-
+    // Calculator is responsible for calculating an attack.
     private final Calculator calculator = new Calculator();
+
+    // Console is responsible for only I/O operations.
     private final Console console = new Console();
+
+    // Parser is responsible for parsing user input for menu & attack.
     private final Parser parser = new Parser();
 
+    // This will hold all the players throughout the game.
     private final ArrayList<Character> characters = new ArrayList<>();
+
+    // Keeps track of what player's turn it is.
     private int onPlayer = 0;
+
+    // This boolean is set as false until the attack menu has been selecting thus starting the game.
     public boolean nextMenu = false;
+
+    // Keeps track if a player has re-rolls.
     private int nOfReRolls = 0;
 
+
+    // This is the function that starts the entire game and displays the menus to the console
     public void start() {
+
+        // While the attack menu has not been selected and players are still being added.
         while (!nextMenu) {
+
+            // Show the main menu for a new player to join the player array.
             mainMenu();
         }
 
+        // Since nextMenu is now true, the attack menu has been selected and the game has started.
         while (nextMenu) {
+            // Show the attack menu and apply an attack to specific player.
             attackMenu();
+
+            // Of course the isGameOver method returns a boolean indicating there is only one player left standing.
             if (isGameOver()) {
+
+                // Executing the below to notify that the game is over and exit the program.
                 console.clearScreen();
                 console.log("The winner of the game is " + characters.get(0).getPlayer());
                 exit(0);
@@ -39,40 +63,52 @@ public class Game {
         }
     }
 
+    // This method executes after a players turn has ended
     public void next() {
+
+        // Make sure the player is within range
         if (onPlayer <= characters.size() - 1) {
             onPlayer += 1;
         } else {
+            // Else set it back to the first in line or first index of array.
             onPlayer = 0;
         }
+
     }
 
-    public void displayDice() {
-        int counter = 0;
-        for (int die: diceTypes) {
-            if (counter % 4 == 0) {
-                console.log("\n");
-            }
-            counter += 1;
-            console.logf(counter + ": D" + die + "  ");
-        }
-        console.log("\n");
-    }
 
+    // Displays and calls a function that takes input for attack
     public void attackMenu() {
         console.log("\n\n\n");
         console.log("Dungeons & Dragons (Attack Menu):");
-//        int diceChoice = askForMenuChoice("What type of dice do you want to roll: ", diceTypes.length);
-//        int qtyOfDice = askForMenuChoice("How many dice do you want to roll 1 - 6: ", 6);
+
+        // Since there is access to what player's turn it is we will use that to get the index in the characters array.
         Character attacker = characters.get(onPlayer <= characters.size() - 1 ? onPlayer : 0);
+
+        // Call the getAttackChoice method to get the int of the index of who will be the defender in the characters array.
         int attackChoice = getAttackChoice(attacker);
+
+        // Call get attackDice to get the array[0]=n of dice array[1] type of dice
         int [] diceChoices = getAttackDice();
+
+        // Display to the user what he chose.
+
         console.log("chose: " + (attackChoice - 1) + " On Player: " + onPlayer);
+
+        // User the Calculator class and use the attack method to get the results of the attack.
         int[] results = calculator.attack(diceChoices[0], diceChoices[1], characters.get(attackChoice - 1));
+
+        // If results[1] representing re-rolls has a value then it will be incremented & accounted for below.
         nOfReRolls += results[1];
+
+        // If there is re-rolls recursively call this function again.
         if (0 < nOfReRolls) {
+
+            // Display to the attacker that they got re-roll(s).
             console.log(attacker.getPlayer() + " " + "has "  + nOfReRolls + " re-roll(s)...\n");
+
             nOfReRolls -= 1;
+
             attackMenu();
         } else {
             next();
@@ -163,11 +199,15 @@ public class Game {
         }
         console.clearScreen();
     }
+
     public boolean isGameOver() {
         int survivorCount = 0;
         int counter = 0;
+
         ArrayList remove = new ArrayList<>();
+
         Iterator<Character> characterArr = characters.iterator();
+
         while (characterArr.hasNext()) {
             Character character = characterArr.next();
             if (character.getHealth() <= 0) {
