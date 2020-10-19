@@ -25,7 +25,7 @@ public class Game {
     private final Parser parser = new Parser();
 
     // This will hold all the players throughout the game.
-    private final ArrayList<Character> characters = new ArrayList<>();
+    private ArrayList<Character> characters = new ArrayList<>();
 
     // Keeps track of what player's turn it is.
     private int onPlayer = 0;
@@ -52,20 +52,11 @@ public class Game {
             // Show the attack menu and apply an attack to specific player.
             attackMenu();
 
-            // Of course the isGameOver method returns a boolean indicating there is only one player left standing.
-            if (isGameOver()) {
-
-                // Executing the below to notify that the game is over and exit the program.
-                console.clearScreen();
-                console.log("The winner of the game is " + characters.get(0).getPlayer());
-                exit(0);
-            }
         }
     }
 
     // This method executes after a players turn has ended
     public void next() {
-
         // Make sure the player is within range
         if (onPlayer <= characters.size() - 1) {
             onPlayer += 1;
@@ -79,6 +70,7 @@ public class Game {
 
     // Displays and calls a function that takes input for attack
     public void attackMenu() {
+        isGameOver();
         console.log("\n\n\n");
         console.log("Dungeons & Dragons (Attack Menu):");
 
@@ -200,31 +192,27 @@ public class Game {
         console.clearScreen();
     }
 
-    public boolean isGameOver() {
-        int survivorCount = 0;
-        int counter = 0;
+    public void isGameOver() {
 
-        ArrayList remove = new ArrayList<>();
+        ArrayList<Character> newSurvivors = new ArrayList<Character>();
 
         Iterator<Character> characterArr = characters.iterator();
 
         while (characterArr.hasNext()) {
             Character character = characterArr.next();
-            if (character.getHealth() <= 0) {
-                console.log(character.getPlayer() + " has been eliminated...");
-                remove.add(counter);
-                continue;
+            if (character.getHealth() > 0) {
+                newSurvivors.add(character);
             } else {
-                survivorCount += 1;
+                console.log(character.getPlayer() + " has been eliminated...");
             }
-            counter += 1;
         }
-        Iterator removeArr = remove.iterator();
-        while (removeArr.hasNext()) {
-            characters.remove(removeArr.next());
+        characters = newSurvivors;
+        if (characters.size() == 1) {
+            console.clearScreen();
+            console.log("The winner of the game is " + characters.get(0).getPlayer());
+            exit(0);
         }
 
-        return survivorCount == 1;
     }
 
 }
