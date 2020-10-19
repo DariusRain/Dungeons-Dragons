@@ -62,14 +62,13 @@ public class Game {
     public void attackMenu() {
         console.log("\n\n\n");
         console.log("Dungeons & Dragons (Attack Menu):");
-        displayStatus();
+//        int diceChoice = askForMenuChoice("What type of dice do you want to roll: ", diceTypes.length);
+//        int qtyOfDice = askForMenuChoice("How many dice do you want to roll 1 - 6: ", 6);
         Character attacker = characters.get(onPlayer <= characters.size() - 1 ? onPlayer : 0);
-        int attackChoice = askForMenuChoice("Choose who to attack ( " + attacker.getPlayer() + " / " + attacker.getType() + " / " + attacker.getHealth() +" ):" + (0 < nOfReRolls? "(Re-roll #" + nOfReRolls + ") " : " "), characters.size() + 1);
-        displayDice();
-        int diceChoice = askForMenuChoice("What type of dice do you want to roll: ", diceTypes.length);
-        int qtyOfDice = askForMenuChoice("How many dice do you want to roll 1 - 6: ", 6);
+        int attackChoice = getAttackChoice(attacker);
+        int [] diceChoices = getAttackDice();
         console.log("chose: " + (attackChoice - 1) + " On Player: " + onPlayer);
-        int[] results = calculator.attack(qtyOfDice, diceTypes[diceChoice - 1], characters.get(attackChoice - 1));
+        int[] results = calculator.attack(diceChoices[0], diceChoices[1], characters.get(attackChoice - 1));
         nOfReRolls += results[1];
         if (0 < nOfReRolls) {
             console.log(attacker.getPlayer() + " " + "has "  + nOfReRolls + " re-roll(s)...\n");
@@ -78,6 +77,22 @@ public class Game {
         } else {
             next();
         }
+    }
+
+    public int getAttackChoice(Character attacker) {
+        displayStatus();
+        int attackChoice = askForMenuChoice("Choose who to attack ( " + attacker.getPlayer() + " / " + attacker.getType() + " / " + attacker.getHealth() +" ):" + (0 < nOfReRolls? "(Re-roll #" + nOfReRolls + ") " : " "), characters.size() + 1);
+        return attackChoice;
+    }
+
+    public int[] getAttackDice() {
+        int[] diceChoices = parser.diceChoice(console.input("Choose dice in format '<1-6>d<4,6,8,10,12,20>' '6d20': "));
+            if (diceChoices[0] > -1 && diceChoices[1] > -1) {
+                return  diceChoices;
+            } else {
+                console.log("( Invalid dice choice! )");
+                return getAttackDice();
+            }
     }
 
     public void askForPlayerName(int choice) {
