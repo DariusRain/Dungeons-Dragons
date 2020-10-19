@@ -1,8 +1,13 @@
 package com.coderain;
 
 public class Character {
+    // type is refering to Driud, Wizard, Barbarian etc.
     private String type;
+
+    // Player is the player's name
     private String player;
+
+    // Health is initialized to 100 in constructor
     private int health;
 
 
@@ -12,6 +17,7 @@ public class Character {
         health = 100;
     }
 
+    // Getters & setters
     public void setType(String type) {
         this.type = type;
     }
