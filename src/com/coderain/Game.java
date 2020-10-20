@@ -193,18 +193,24 @@ public class Game {
     }
 
     public void isGameOver() {
+        int survivorCount = characters.size();
+        int counter = 0;
+
 
         ArrayList<Character> newSurvivors = new ArrayList<Character>();
 
         Iterator<Character> characterArr = characters.iterator();
-
         while (characterArr.hasNext()) {
             Character character = characterArr.next();
             if (character.getHealth() > 0) {
                 newSurvivors.add(character);
+                if (onPlayer == counter) {
+                    onPlayer = newSurvivors.size() - 1;
+                }
             } else {
                 console.log(character.getPlayer() + " has been eliminated...");
             }
+            counter += 1;
         }
         characters = newSurvivors;
         if (characters.size() == 1) {
